@@ -45,11 +45,11 @@ abstract class TestCase extends Orchestra
         });
 
         Schema::dropIfExists('stored_events');
-        include_once __DIR__.'/../stubs/create_stored_events_table.php.stub';
+        include_once __DIR__ . '/../stubs/create_stored_events_table.php.stub';
         (new \CreateStoredEventsTable())->up();
 
         Schema::dropIfExists('snapshots');
-        include_once __DIR__.'/../stubs/create_snapshots_table.php.stub';
+        include_once __DIR__ . '/../stubs/create_snapshots_table.php.stub';
         (new \CreateSnapshotsTable())->up();
 
         Schema::dropIfExists('other_stored_events');
@@ -57,6 +57,8 @@ abstract class TestCase extends Orchestra
             DB::statement('CREATE TABLE other_stored_events LIKE stored_events');
         } elseif ($this->dbDriver() === 'pgsql') {
             DB::statement('CREATE TABLE other_stored_events AS TABLE stored_events;');
+        } elseif ($this->dbDriver() === 'sqlite') {
+            DB::statement('CREATE TABLE other_stored_events AS SELECT * FROM stored_events;');
         } else {
             throw new Exception(
                 sprintf('DB driver [%s] is not supported by this test suite.', $this->dbDriver())
