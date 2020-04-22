@@ -11,13 +11,12 @@ use Spatie\EventSourcing\Models\EloquentStoredEvent;
 
 class EloquentStoredEventRepository implements StoredEventRepository
 {
-    protected string $storedEventModel;
-
     public function __construct()
     {
         $this->storedEventModel = config('event-sourcing.stored_event_model', EloquentStoredEvent::class);
 
-        if (! new $this->storedEventModel instanceof EloquentStoredEvent) {
+        $class = new $this->storedEventModel();
+        if (!($class instanceof EloquentStoredEvent)) {
             throw new InvalidEloquentStoredEventModel("The class {$this->storedEventModel} must extend EloquentStoredEvent");
         }
     }
@@ -31,14 +30,14 @@ class EloquentStoredEventRepository implements StoredEventRepository
             $query->uuid($uuid);
         }
 
-        return $query->orderBy('id')->cursor()->map(fn (EloquentStoredEvent $storedEvent) => $storedEvent->toStoredEvent());
+        return $query->orderBy('id')->cursor()->map(function (EloquentStoredEvent $storedEvent) {return $storedEvent->toStoredEvent();});
     }
 
     public function retrieveAllStartingFrom(int $startingFrom, string $uuid = null): LazyCollection
     {
         $query = $this->prepareEventModelQuery($startingFrom, $uuid);
 
-        return $query->orderBy('id')->cursor()->map(fn (EloquentStoredEvent $storedEvent) => $storedEvent->toStoredEvent());
+        return $query->orderBy('id')->cursor()->map(function (EloquentStoredEvent $storedEvent) {return $storedEvent->toStoredEvent();});
     }
 
     public function countAllStartingFrom(int $startingFrom, string $uuid = null): int
@@ -53,7 +52,7 @@ class EloquentStoredEventRepository implements StoredEventRepository
             ->uuid($uuid)
             ->afterVersion($version);
 
-        return $query->orderBy('id')->cursor()->map(fn (EloquentStoredEvent $storedEvent) => $storedEvent->toStoredEvent());
+        return $query->orderBy('id')->cursor()->map(function (EloquentStoredEvent $storedEvent) {return $storedEvent->toStoredEvent();});
     }
 
     public function persist(ShouldBeStored $event, string $uuid = null, int $aggregateVersion = null): StoredEvent
@@ -100,7 +99,7 @@ class EloquentStoredEventRepository implements StoredEventRepository
     {
         $map = config('event-sourcing.event_class_map', []);
 
-        if (! empty($map) && in_array($class, $map)) {
+        if (!empty($map) && in_array($class, $map)) {
             return array_search($class, $map, true);
         }
 

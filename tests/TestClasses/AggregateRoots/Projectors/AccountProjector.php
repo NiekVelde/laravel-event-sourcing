@@ -11,9 +11,14 @@ class AccountProjector implements Projector
 {
     use ProjectsEvents;
 
-    protected array $handlesEvents = [
+    protected $handlesEvents = [
         MoneyAdded::class => 'onMoneyAdded',
     ];
+
+    public function shouldBeCalledImmediately(): bool
+    {
+        return false;
+    }
 
     public function onMoneyAdded(MoneyAdded $event, string $aggregateUuid)
     {

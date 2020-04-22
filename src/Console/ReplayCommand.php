@@ -16,7 +16,7 @@ class ReplayCommand extends Command
 
     protected $description = 'Replay stored events';
 
-    protected ?Projectionist $projectionist;
+    protected $projectionist;
 
     public function handle(Projectionist $projectionist): void
     {
@@ -36,7 +36,7 @@ class ReplayCommand extends Command
     public function selectProjectors(array $projectorClassNames): ?Collection
     {
         if (count($projectorClassNames ?? []) === 0) {
-            if (! $confirmed = $this->confirm('Are you sure you want to replay events to all projectors?', true)) {
+            if (!$confirmed = $this->confirm('Are you sure you want to replay events to all projectors?', true)) {
                 return null;
             }
 
@@ -44,9 +44,9 @@ class ReplayCommand extends Command
         }
 
         return collect($projectorClassNames)
-            ->map(fn (string $projectorName) => ltrim($projectorName, '\\'))
+            ->map(function (string $projectorName) {return ltrim($projectorName, '\\');})
             ->map(function (string $projectorName) {
-                if (! $projector = $this->projectionist->getProjector($projectorName)) {
+                if (!$projector = $this->projectionist->getProjector($projectorName)) {
                     throw new Exception("Projector {$projectorName} not found. Did you register it?");
                 }
 

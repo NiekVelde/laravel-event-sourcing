@@ -8,24 +8,23 @@ use Illuminate\Support\Arr;
 use Spatie\EventSourcing\EventSerializers\EventSerializer;
 use Spatie\EventSourcing\Exceptions\InvalidStoredEvent;
 use Spatie\EventSourcing\Facades\Projectionist;
-use Spatie\SchemalessAttributes\SchemalessAttributes;
 
 class StoredEvent implements Arrayable
 {
-    public ?int $id;
+    public $id;
 
     /** @var array|string */
     public $event_properties;
 
-    public string $aggregate_uuid;
+    public $aggregate_uuid;
 
-    public string $event_class;
+    public $event_class;
 
-    public SchemalessAttributes $meta_data;
+    public $meta_data;
 
-    public string $created_at;
+    public $created_at;
 
-    public ?ShouldBeStored $event;
+    public $event;
 
     public function __construct(array $data)
     {
@@ -40,8 +39,8 @@ class StoredEvent implements Arrayable
             $this->event = app(EventSerializer::class)->deserialize(
                 self::getActualClassForEvent($this->event_class),
                 is_string($this->event_properties)
-                    ? $this->event_properties
-                    : json_encode($this->event_properties)
+                ? $this->event_properties
+                : json_encode($this->event_properties)
             );
         } catch (Exception $exception) {
             throw InvalidStoredEvent::couldNotUnserializeEvent($this, $exception);
@@ -68,7 +67,7 @@ class StoredEvent implements Arrayable
             $tags = $this->event->tags();
         }
 
-        if (! $this->shouldDispatchJob()) {
+        if (!$this->shouldDispatchJob()) {
             return;
         }
 
@@ -103,7 +102,7 @@ class StoredEvent implements Arrayable
     {
         $map = config('event-sourcing.event_class_map', []);
 
-        if (! empty($map) && in_array($class, $map)) {
+        if (!empty($map) && in_array($class, $map)) {
             return array_search($class, $map, true);
         }
 

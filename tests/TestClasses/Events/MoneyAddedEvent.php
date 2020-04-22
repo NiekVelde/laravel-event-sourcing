@@ -10,9 +10,9 @@ class MoneyAddedEvent implements ShouldBeStored
 {
     use SerializesModels;
 
-    public object $account;
+    public $account;
 
-    public int $amount;
+    public $amount;
 
     public function __construct(Account $account, int $amount)
     {
@@ -24,7 +24,7 @@ class MoneyAddedEvent implements ShouldBeStored
     public function tags(): array
     {
         return [
-            'Account:'.$this->account->id,
+            'Account:' . $this->account->id,
             self::class,
         ];
     }

@@ -21,7 +21,7 @@ use Spatie\EventSourcing\Tests\TestClasses\Reactors\BrokeReactor;
 
 class ProjectionistTest extends TestCase
 {
-    protected Account $account;
+    protected $account;
 
     public function setUp(): void
     {
@@ -79,7 +79,7 @@ class ProjectionistTest extends TestCase
     {
         $this->setConfig('event-sourcing.catch_exceptions', true);
 
-        $projector = Mockery::mock(ProjectorThatThrowsAnException::class.'[handleException]');
+        $projector = Mockery::mock(ProjectorThatThrowsAnException::class . '[handleException]');
 
         $projector->shouldReceive('handleException')->once();
 
@@ -136,7 +136,7 @@ class ProjectionistTest extends TestCase
 
         Queue::assertPushed(HandleStoredEventJob::class, function (HandleStoredEventJob $job) {
             $expected = [
-                'Account:'.$this->account->id,
+                'Account:' . $this->account->id,
                 MoneyAddedEvent::class,
             ];
 

@@ -12,7 +12,7 @@ class CacheEventHandlersCommandTest extends TestCase
 {
     use MatchesSnapshots;
 
-    private Projectionist $projectionist;
+    private $projectionist;
 
     public function setUp(): void
     {
@@ -30,6 +30,6 @@ class CacheEventHandlersCommandTest extends TestCase
 
         $this->artisan('event-sourcing:cache-event-handlers')->assertExitCode(0);
 
-        $this->assertMatchesSnapshot(file_get_contents(config('event-sourcing.cache_path').'/event-handlers.php'));
+        $this->assertMatchesSnapshot(file_get_contents(config('event-sourcing.cache_path') . '/event-handlers.php'));
     }
 }

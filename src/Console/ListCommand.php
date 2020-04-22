@@ -19,15 +19,15 @@ class ListCommand extends Command
         $projectors = $projectionist->getProjectors();
         $rows = $this->convertEventHandlersToTableRows($projectors);
         count($rows)
-            ? $this->table(['Event', 'Handled by projectors'], $rows)
-            : $this->warn('No projectors registered');
+        ? $this->table(['Event', 'Handled by projectors'], $rows)
+        : $this->warn('No projectors registered');
 
         $this->info('');
         $projectors = $projectionist->getReactors();
         $rows = $this->convertEventHandlersToTableRows($projectors);
         count($rows)
-            ? $this->table(['Event', 'Handled by reactors'], $rows)
-            : $this->warn('No reactors registered');
+        ? $this->table(['Event', 'Handled by reactors'], $rows)
+        : $this->warn('No reactors registered');
     }
 
     private function convertEventHandlersToTableRows(Collection $eventHandlers): array
@@ -41,7 +41,9 @@ class ListCommand extends Command
                 return $events;
             }, []);
 
-        return collect($events)->map(fn (array $eventHandlers, string $eventClass) => [$eventClass, implode(PHP_EOL, collect($eventHandlers)->sort()->toArray())])
+        return collect($events)->map(function (array $eventHandlers, string $eventClass) {
+            return [$eventClass, implode(PHP_EOL, collect($eventHandlers)->sort()->toArray())];
+        })
             ->sort()
             ->values()
             ->toArray();

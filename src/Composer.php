@@ -8,7 +8,7 @@ class Composer
 {
     public static function getAutoloadedFiles($composerJsonPath): array
     {
-        if (! file_exists($composerJsonPath)) {
+        if (!file_exists($composerJsonPath)) {
             return [];
         }
 
@@ -21,6 +21,6 @@ class Composer
             $composerContents['autoload-dev']['files'] ?? []
         );
 
-        return array_map(fn (string $path) => realpath($basePath.$path), $paths);
+        return array_map(function (string $path) use ($basePath) {return realpath($basePath . $path);}, $paths);
     }
 }

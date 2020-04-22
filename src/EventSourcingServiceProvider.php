@@ -20,19 +20,19 @@ class EventSourcingServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/event-sourcing.php' => app()->configPath('event-sourcing.php'),
+                __DIR__ . '/../config/event-sourcing.php' => app()->configPath('event-sourcing.php'),
             ], 'config');
         }
 
-        if (! class_exists('CreateStoredEventsTable')) {
+        if (!class_exists('CreateStoredEventsTable')) {
             $this->publishes([
-                __DIR__.'/../stubs/create_stored_events_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_stored_events_table.php'),
+                __DIR__ . '/../stubs/create_stored_events_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_stored_events_table.php'),
             ], 'migrations');
         }
 
-        if (! class_exists('CreateSnapshotsTable')) {
+        if (!class_exists('CreateSnapshotsTable')) {
             $this->publishes([
-                __DIR__.'/../stubs/create_snapshots_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_snapshots_table.php'),
+                __DIR__ . '/../stubs/create_snapshots_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_snapshots_table.php'),
             ], 'migrations');
         }
 
@@ -43,7 +43,7 @@ class EventSourcingServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/event-sourcing.php', 'event-sourcing');
+        $this->mergeConfigFrom(__DIR__ . '/../config/event-sourcing.php', 'event-sourcing');
 
         $this->app->singleton(Projectionist::class, function () {
             $config = config('event-sourcing');
@@ -61,7 +61,9 @@ class EventSourcingServiceProvider extends ServiceProvider
 
         $this->app->singleton(StoredEventRepository::class, config('event-sourcing.stored_event_repository'));
 
-        $this->app->singleton(EventSubscriber::class, fn () => new EventSubscriber(config('event-sourcing.stored_event_repository')));
+        $this->app->singleton(EventSubscriber::class, function () {
+            return new EventSubscriber(config('event-sourcing.stored_event_repository'));
+        });
 
         $this->app
             ->when(ReplayCommand::class)
@@ -102,7 +104,7 @@ class EventSourcingServiceProvider extends ServiceProvider
 
         $cachedEventHandlers = $this->getCachedEventHandlers();
 
-        if (! is_null($cachedEventHandlers)) {
+        if (!is_null($cachedEventHandlers)) {
             $projectionist->addEventHandlers($cachedEventHandlers);
 
             return;
@@ -117,9 +119,9 @@ class EventSourcingServiceProvider extends ServiceProvider
 
     private function getCachedEventHandlers(): ?array
     {
-        $cachedEventHandlersPath = config('event-sourcing.cache_path').'/event-handlers.php';
+        $cachedEventHandlersPath = config('event-sourcing.cache_path') . '/event-handlers.php';
 
-        if (! file_exists($cachedEventHandlersPath)) {
+        if (!file_exists($cachedEventHandlersPath)) {
             return null;
         }
 

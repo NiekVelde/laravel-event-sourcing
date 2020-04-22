@@ -6,4 +6,8 @@ use Spatie\EventSourcing\Projectors\QueuedProjector as QueuedProjectorInterface;
 
 class QueuedProjector extends BalanceProjector implements QueuedProjectorInterface
 {
+    public function shouldBeCalledImmediately(): bool
+    {
+        return false;
+    }
 }

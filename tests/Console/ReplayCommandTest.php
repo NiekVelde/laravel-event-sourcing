@@ -22,7 +22,7 @@ use Spatie\EventSourcing\Tests\TestClasses\Reactors\BrokeReactor;
 
 class ReplayCommandTest extends TestCase
 {
-    protected Account $account;
+    protected $account;
 
     public function setUp(): void
     {
@@ -42,7 +42,7 @@ class ReplayCommandTest extends TestCase
     {
         Event::fake([FinishedEventReplay::class, StartingEventReplay::class]);
 
-        $projector = Mockery::mock(BalanceProjector::class.'[onMoneyAdded]');
+        $projector = Mockery::mock(BalanceProjector::class . '[onMoneyAdded]');
 
         $projector->shouldReceive('onMoneyAdded')->andReturnNull()->times(3);
 
@@ -51,7 +51,7 @@ class ReplayCommandTest extends TestCase
         Event::assertNotDispatched(StartingEventReplay::class);
         Event::assertNotDispatched(FinishedEventReplay::class);
 
-        $this->artisan('event-sourcing:replay '.get_class($projector));
+        $this->artisan('event-sourcing:replay ' . get_class($projector));
 
         Event::assertDispatched(StartingEventReplay::class);
         Event::assertDispatched(FinishedEventReplay::class);
@@ -103,7 +103,7 @@ class ReplayCommandTest extends TestCase
     /** @test */
     public function it_will_call_certain_methods_on_the_projector_when_replaying_events()
     {
-        $projector = Mockery::mock(BalanceProjector::class.'[onStartingEventReplay, onFinishedEventReplay]');
+        $projector = Mockery::mock(BalanceProjector::class . '[onStartingEventReplay, onFinishedEventReplay]');
 
         Projectionist::addProjector($projector);
 

@@ -11,9 +11,9 @@ class HandleStoredEventJob implements HandleDomainEventJob, ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
-    public StoredEvent $storedEvent;
+    public $storedEvent;
 
-    public array $tags;
+    public $tags;
 
     public function __construct(StoredEvent $storedEvent, array $tags)
     {
@@ -30,8 +30,8 @@ class HandleStoredEventJob implements HandleDomainEventJob, ShouldQueue
     public function tags(): array
     {
         return empty($this->tags)
-            ? [$this->storedEvent->event_class]
-            : $this->tags;
+        ? [$this->storedEvent->event_class]
+        : $this->tags;
     }
 
     public static function createForEvent(StoredEvent $event, array $tags): HandleDomainEventJob

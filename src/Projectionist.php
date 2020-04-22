@@ -16,17 +16,12 @@ use Spatie\EventSourcing\Projectors\QueuedProjector;
 
 class Projectionist
 {
-    private EventHandlerCollection $projectors;
-
-    private EventHandlerCollection $reactors;
-
-    private bool $catchExceptions;
-
-    private bool $replayChunkSize;
-
-    private bool $isProjecting = false;
-
-    private bool $isReplaying = false;
+    private $projectors;
+    private $reactors;
+    private $catchExceptions;
+    private $replayChunkSize;
+    private $isProjecting = false;
+    private $isReplaying = false;
 
     public function __construct(array $config)
     {
@@ -43,7 +38,7 @@ class Projectionist
             $projector = app($projector);
         }
 
-        if (! $projector instanceof Projector) {
+        if (!$projector instanceof Projector) {
             throw InvalidEventHandler::notAProjector($projector);
         }
 
@@ -91,14 +86,18 @@ class Projectionist
 
     public function getProjector(string $name): ?Projector
     {
-        return $this->projectors->all()->first(fn (Projector $projector) => $projector->getName() === $name);
+        return $this->projectors->all()->first(function (Projector $projector) use ($name) {
+            return $projector->getName() === $name;
+        });
     }
 
     public function getAsyncProjectorsFor(StoredEvent $storedEvent): Collection
     {
         return $this->projectors
             ->forEvent($storedEvent)
-            ->reject(fn (Projector $projector) => $projector->shouldBeCalledImmediately())
+            ->reject(function (Projector $projector) {
+                return !method_exists($projector, 'shouldBeCalledImmediately') || $projector->shouldBeCalledImmediately();
+            })
             ->values();
     }
 
@@ -108,7 +107,7 @@ class Projectionist
             $reactor = app($reactor);
         }
 
-        if (! $reactor instanceof EventHandler) {
+        if (!$reactor instanceof EventHandler) {
             throw InvalidEventHandler::notAnEventHandler($reactor);
         }
 
@@ -138,7 +137,7 @@ class Projectionist
 
     public function addEventHandler($eventHandlerClass)
     {
-        if (! is_string($eventHandlerClass)) {
+        if (!is_string($eventHandlerClass)) {
             $eventHandlerClass = get_class($eventHandlerClass);
         }
 
@@ -174,7 +173,7 @@ class Projectionist
     {
         $projectors = $this->projectors
             ->forEvent($storedEvent)
-            ->reject(fn (Projector $projector) => $projector->shouldBeCalledImmediately());
+            ->filter(function (Projector $projector) {return method_exists($projector, 'shouldBeCalledImmediately') && !$projector->shouldBeCalledImmediately();});
 
         $this->applyStoredEventToProjectors(
             $storedEvent,
@@ -191,7 +190,7 @@ class Projectionist
     {
         $projectors = $this->projectors
             ->forEvent($storedEvent)
-            ->filter(fn (Projector $projector) => $projector->shouldBeCalledImmediately());
+            ->filter(function (Projector $projector) {return !method_exists($projector, 'shouldBeCalledImmediately') || $projector->shouldBeCalledImmediately();});
 
         $this->applyStoredEventToProjectors($storedEvent, $projectors);
     }
@@ -224,7 +223,7 @@ class Projectionist
         try {
             $eventHandler->handle($storedEvent);
         } catch (Exception $exception) {
-            if (! $this->catchExceptions) {
+            if (!$this->catchExceptions) {
                 throw $exception;
             }
 

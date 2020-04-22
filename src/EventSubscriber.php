@@ -4,8 +4,6 @@ namespace Spatie\EventSourcing;
 
 class EventSubscriber
 {
-    private StoredEventRepository $repository;
-
     public function __construct(string $storedEventRepository)
     {
         $this->repository = app($storedEventRepository);
@@ -13,12 +11,12 @@ class EventSubscriber
 
     public function subscribe($events): void
     {
-        $events->listen('*', static::class.'@handle');
+        $events->listen('*', static::class . '@handle');
     }
 
     public function handle(string $eventName, $payload): void
     {
-        if (! $this->shouldBeStored($eventName)) {
+        if (!$this->shouldBeStored($eventName)) {
             return;
         }
 
@@ -33,7 +31,7 @@ class EventSubscriber
 
     private function shouldBeStored($event): bool
     {
-        if (! class_exists($event)) {
+        if (!class_exists($event)) {
             return false;
         }
 

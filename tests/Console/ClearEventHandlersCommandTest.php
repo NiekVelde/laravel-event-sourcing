@@ -9,7 +9,7 @@ use Spatie\EventSourcing\Tests\TestClasses\Reactors\BrokeReactor;
 
 class ClearEventHandlersCommandTest extends TestCase
 {
-    private Projectionist $projectionist;
+    private $projectionist;
 
     public function setUp(): void
     {
@@ -27,10 +27,10 @@ class ClearEventHandlersCommandTest extends TestCase
 
         $this->artisan('event-sourcing:cache-event-handlers')->assertExitCode(0);
 
-        $this->assertFileExists(config('event-sourcing.cache_path').'/event-handlers.php');
+        $this->assertFileExists(config('event-sourcing.cache_path') . '/event-handlers.php');
 
         $this->artisan('event-sourcing:clear-event-handlers')->assertExitCode(0);
 
-        $this->assertFileNotExists(config('event-sourcing.cache_path').'/event-handlers.php');
+        $this->assertFileNotExists(config('event-sourcing.cache_path') . '/event-handlers.php');
     }
 }

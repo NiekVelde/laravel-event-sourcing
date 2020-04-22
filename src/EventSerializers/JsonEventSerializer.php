@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 
 class JsonEventSerializer implements EventSerializer
 {
-    private SymfonySerializer $serializer;
+    private $serializer;
 
     public function __construct()
     {
@@ -43,6 +43,7 @@ class JsonEventSerializer implements EventSerializer
          *  We call manually serialize and unserialize to trigger
          * `Illuminate\Queue\SerializesModels` model restoring capabilities.
          */
+
         return unserialize(serialize($restoredEvent));
     }
 }

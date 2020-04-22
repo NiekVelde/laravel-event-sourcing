@@ -6,13 +6,14 @@ use Spatie\EventSourcing\Exceptions\InvalidEloquentSnapshotModel;
 
 class EloquentSnapshotRepository implements SnapshotRepository
 {
-    protected string $snapshotModel;
+    protected $snapshotModel;
 
     public function __construct()
     {
         $this->snapshotModel = config('event-sourcing.snapshot_model', EloquentSnapshot::class);
 
-        if (! new $this->snapshotModel instanceof EloquentSnapshot) {
+        $class = new $this->snapshotModel();
+        if (!($class instanceof EloquentSnapshot)) {
             throw new InvalidEloquentSnapshotModel("The class {$this->snapshotModel} must extend EloquentSnapshot");
         }
     }
