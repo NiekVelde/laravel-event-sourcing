@@ -1,3 +1,5 @@
+Fork of spatie/laravel-event-sourcing, made compatible with php version 7.2.
+
 # Event sourcing for Artisans 📽
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-event-sourcing.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-event-sourcing)
